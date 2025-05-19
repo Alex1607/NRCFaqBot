@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
+
 public class Main extends ListenerAdapter {
     // Create a state service / object to store the responded messages
     public static final Set<Long> RESPONDED_MESSAGES = new HashSet<>();
@@ -39,16 +41,18 @@ public class Main extends ListenerAdapter {
         FaqService faqService = new FaqService(WebRequestService.loadFAQ());
         MessageGeneratorService messageGeneratorService = new MessageGeneratorService(webRequestService, faqService, System.getenv("AI_PROMPT"), System.getenv("AI_PROMPT_GENERAL"));
 
-        slashCommandHandler = new SlashCommandHandler(faqService);
+        slashCommandHandler = new SlashCommandHandler(faqService, messageGeneratorService);
         messageReceivedHandler = new MessageReceivedHandler(faqService, messageGeneratorService);
         channelCreateHandler = new ChannelCreateHandler(faqService, supportForumId, messageGeneratorService);
-        messageContextInteractionHandler = new MessageContextInteractionHandler(faqService, supportForumId, messageGeneratorService);
+        messageContextInteractionHandler = new MessageContextInteractionHandler(faqService, messageGeneratorService);
 
         JDA jda = JDABuilder.createLight(System.getenv("DISCORD_BOT_API_KEY"), List.of(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES)).addEventListeners(new Main()).build();
         jda.awaitReady();
         jda.updateCommands().addCommands(
                 Commands.message("AI Antwort"),
-                Commands.slash("refresh", "Lädt das FAQ neu")
+                Commands.slash("refresh", "Lädt das FAQ neu"),
+                Commands.slash("faq", "Beantwortet eine Frage basierend auf dem FAQ")
+                        .addOption(STRING, "question", "Die Frage, die beantwortet werden soll", true)
         ).queue();
     }
 
@@ -79,6 +83,8 @@ public class Main extends ListenerAdapter {
 
         if ("refresh".equals(interactionEvent.getName())) {
             slashCommandHandler.handleRefreshCommand(interactionEvent);
+        } else if ("faq".equals(interactionEvent.getName())) {
+            slashCommandHandler.handleFaqCommand(interactionEvent);
         } else {
             interactionEvent.deferReply(true).setContent("I can't handle that command right now :(").queue();
         }

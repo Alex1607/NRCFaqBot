@@ -94,5 +94,18 @@ public class MessageGeneratorService {
                 .replace("!!!FAQ_TEXT!!!", faqService.getFaqText());
     }
 
-}
+    public String generateFaqResponse(String question) throws IOException, URISyntaxException {
+        if (faqService.invalidFAQ()) {
+            return null;
+        }
 
+        String response = webRequestService.fetchModelResponse(buildThreadPrompt(question));
+        response = sanitizeResponse(response);
+
+        if (response.toLowerCase().contains(NO_ANSWER)) {
+            return null;
+        }
+
+        return response;
+    }
+}

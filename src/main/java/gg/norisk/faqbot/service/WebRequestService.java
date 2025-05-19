@@ -69,9 +69,9 @@ public class WebRequestService {
         return GSON.toJson(
                 OpenAIChatPayload.builder().model(model)
                         .temperature(0.6f)
-                        .top_p(0.5f)
-                        .frequency_penalty(1.5f)
-                        .max_tokens(1000)
+                        .topP(0.5f)
+                        .frequencyPenalty(1.5f)
+                        .maxTokens(1000)
                         .message(new OpenAIChatPayload.Message("user", prompt))
         );
     }
