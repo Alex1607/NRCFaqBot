@@ -77,7 +77,7 @@ public class MessageGeneratorService {
         try {
             String response = webRequestService.fetchModelResponse(generalPrompt.replace("!!!USER_QUESTION!!!", message));
             response = sanitizeResponse(response);
-            event.getChannel().sendMessage(response + "\n-# Der Bot war für **diese Antwort** nicht im FAQ-Modus und ist sarkastisch veranlagt. __Bitte nimm diese Nachricht nicht zu ernst__. Dieses Feature ist zum Spaß und kann nur von Teammitgliedern genutzt werden.").queue();
+            event.getChannel().sendMessage(response + "\n-# Der Bot war für **diese Antwort** nicht im FAQ-Modus und ist sarkastisch veranlagt. __Bitte nimm diese Nachricht nicht zu ernst__. Dieses Feature ist zum Spaß und kann nur von bestimmten Rollen genutzt werden.").queue();
         } catch (IOException | URISyntaxException e) {
             LOGGER.log(Level.SEVERE, "Failed to get response from AI", e);
         }

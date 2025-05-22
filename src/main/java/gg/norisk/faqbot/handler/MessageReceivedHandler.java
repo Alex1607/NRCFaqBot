@@ -61,8 +61,8 @@ public class MessageReceivedHandler {
     }
 
     public void handleMentionMessage(MessageReceivedEvent event) {
-        if (DiscordUtils.missingRoles(event.getMember())) {
-            LOGGER.log(Level.INFO, "User {0} attempted to use question feature without required role", event.getMember().getUser().getAsTag());
+        if (DiscordUtils.missingSarcasticModeRoles(event.getMember())) {
+            LOGGER.log(Level.INFO, "User {0} attempted to use sarcastic mode without required role", event.getMember().getUser().getAsTag());
             return;
         }
 
